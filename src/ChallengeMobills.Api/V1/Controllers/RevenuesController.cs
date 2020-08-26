@@ -3,16 +3,13 @@ using ChallengeMobills.Api.Controllers;
 using ChallengeMobills.Api.ViewModels;
 using ChallengeMobills.Business.Intefaces;
 using ChallengeMobills.Business.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ChallengeMobills.Api.V1.Controllers
 {
-    [Authorize]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/revenues")]
     public class RevenuesController : MainController
@@ -47,12 +44,12 @@ namespace ChallengeMobills.Api.V1.Controllers
             return Ok(revenue);
         }
 
-        [HttpGet("getBalance")]
+        [HttpGet("balance")]
         public async Task<ActionResult<decimal>> GetBalance()
         {
-            var expenses = GetBalance(_mapper.Map<IEnumerable<Revenue>>(await _revenueRepository.GetAll()));
+            var balance = await _revenueService.GetBalance(await _revenueRepository.GetAll());
 
-            return Ok(expenses);
+            return Ok(balance);
         }
 
         [HttpPost]
@@ -89,13 +86,6 @@ namespace ChallengeMobills.Api.V1.Controllers
             await _revenueService.Delete(id);
 
             return CustomResponse();
-        }
-
-        public decimal GetBalance(IEnumerable<Revenue> revenues)
-        {
-            decimal balance = 0;
-            foreach (var item in revenues.Select(o => o.Value)) balance += item;
-            return balance;
         }
     }
 }

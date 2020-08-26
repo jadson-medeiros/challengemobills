@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ChallengeMobills.Business.Intefaces;
@@ -41,6 +42,16 @@ namespace ChallengeMobills.Business.Services
         {
             await _expenseRepository.Delete(id);
             return true;
+        }
+        
+        public async Task<decimal> GetBalance(IEnumerable<Expense> expenses)
+        {
+            decimal balance = 0;
+            if (expenses == null) return balance;
+            if (expenses.Count() == 0) return balance;
+
+            foreach (var item in expenses.Select(o => o.Value)) balance += item;
+            return balance;
         }
 
         public void Dispose()
